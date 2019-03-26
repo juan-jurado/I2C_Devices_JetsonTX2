@@ -1,6 +1,6 @@
 #include "lidarlite.h"
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
-
+//2.000000
 
 I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
 {
@@ -11,7 +11,7 @@ I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
 
 I2C_Device::~I2C_Device()
 {
-    closeI2CDevice() ;
+    close_I2CDevice();
 }
 
 // Returns true if device file descriptor opens correctly, false otherwise
@@ -26,7 +26,7 @@ bool I2C_Device::open_I2CDevice()
         error = errno ;
         return false ;
     }
-    if (ioctl(I2C_FileDescriptor, I2C_SLAVE, I2C_device_Address) < 0) {
+    if (ioctl(I2C_FileDescriptor, I2C_SLAVE, I2CDevice_Address) < 0) {
         // Could not open the LIDAR on the bus
         error = errno ;
         return false ;
@@ -76,8 +76,14 @@ int I2C_Device::write_I2CDevice(int writeRegister, int writeValue)
 
 }
 
+LidarLite::LidarLite(){
+
+	error = 0;
+
+}
+
 // Return the current calculated distance in centimeters
-int LidarLite::getDistance(I2C_Device Lidar)
+int LidarLite::getDistance(I2C_Device& Lidar)
 {
     int ioResult ;
     int msb, lsb ;
@@ -104,7 +110,7 @@ int LidarLite::getDistance(I2C_Device Lidar)
 }
 
 // Return the previous measurement in centimeters
-int LidarLite::getPreviousDistance(I2C_Device Lidar) {
+int LidarLite::getPreviousDistance(I2C_Device& Lidar) {
 
     int ioResult ;
     int msb, lsb ;
@@ -129,7 +135,7 @@ int LidarLite::getPreviousDistance(I2C_Device Lidar) {
 // Return the velocity (rate of change) in centimeters; +/-
 // Velocity is returned from the Lidar-Lite as an 8-bit 2's complement number
 // The returned value is converted to a signed integer
-int LidarLite::getVelocity(I2C_Device Lidar)
+int LidarLite::getVelocity(I2C_Device& Lidar)
 {
     int ioResult = Lidar.read_I2CDevice(kLidarLiteVelocityMeasurementOutput);
     if (ioResult == 255) {
@@ -143,18 +149,18 @@ int LidarLite::getVelocity(I2C_Device Lidar)
 }
 
 // Return the Lidar-Lite hardware version
-int LidarLite::getHardwareVersion(I2C_Device Lidar)
+int LidarLite::getHardwareVersion(I2C_Device& Lidar)
 {
     return Lidar.read_I2CDevice(kLidarLiteHardwareVersion) ;
 }
 
 // Return the Lidar-Lite software version
-int LidarLite::getSoftwareVersion(I2C_Device Lidar) {
+int LidarLite::getSoftwareVersion(I2C_Device& Lidar) {
     return Lidar.read_I2CDevice(kLidarLiteSoftwareVersion) ;
 }
 
 // Return the last i/o error
-int LidarLite::getError(I2C_Device Lidar)
+int LidarLite::getError(I2C_Device& Lidar)
 {
     return Lidar.error ;
 }

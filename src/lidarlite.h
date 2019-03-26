@@ -62,6 +62,7 @@
 
 // External Control Registers
 #define kLidarLiteHardwareVersion               0x41    // Hardware Version: revisions begin with 0x01
+
 #define kLidarLiteSoftwareVersion               0x4f    // Software Version: Revisions begin with 0x01
 
 // Register Command
@@ -79,30 +80,30 @@ public:
     I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address);
     ~I2C_Device() ;
     bool open_I2CDevice();
-    void close_I2CDevice
+    void close_I2CDevice();
     int write_I2CDevice(int writeRegister, int wirteValue);
     int read_I2CDevice(int readRegister);
     
-}
+};
 
 class LidarLite
 {
 public:
     //unsigned char kI2CBus ;         // I2C bus of the Lidar-Lite
     //int kI2CFileDescriptor ;        // File Descriptor to the Lidar-Lite
-    //int error ;
+    int error ;
     LidarLite();
     ~LidarLite() ;
     //bool openLidarLite() ;                   // Open the I2C bus to the Lidar-Lite
     //void closeLidarLite();                   // Close the I2C bus to the Lidar-Lite
     //int writeLidarLite(int writeRegister,int writeValue) ;
     //int readLidarLite(int readRegister) ;
-    int getDistance(I2C_Device Lidar) ;
-    int getPreviousDistance( I2C_Device Lidar) ;
-    int getVelocity(I2C_Device Lidar) ;
-    int getHardwareVersion(I2C_Device Lidar) ;
-    int getSoftwareVersion(I2C_Device Lidar) ;
-    int getError() ;
+    int getDistance(I2C_Device& Lidar) ;
+    int getPreviousDistance( I2C_Device& Lidar) ;
+    int getVelocity(I2C_Device& Lidar) ;
+    int getHardwareVersion(I2C_Device& Lidar) ;
+    int getSoftwareVersion(I2C_Device& Lidar) ;
+    int getError(I2C_Device& Lidar) ;
 
 };
 

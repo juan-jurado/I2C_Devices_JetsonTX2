@@ -40,29 +40,29 @@ int main() {
         printf("Error: %d", Lidar->error);
     } else {
 
-        int hardwareVersion = lidarLite->getHardwareVersion(Lidar) ;
-        int softwareVersion = lidarLite->getSoftwareVersion(Lidar) ;
+        int hardwareVersion = lidarLite->getHardwareVersion(*Lidar) ;
+        int softwareVersion = lidarLite->getSoftwareVersion(*Lidar) ;
         printf("Hardware Version: %d\n",hardwareVersion) ;
         printf("Software Version: %d\n",softwareVersion) ;
 
         // 27 is the ESC key
 
         while(Lidar->error >= 0 && getkey() != 27){
-            int distance = lidarLite->getDistance(Lidar);
+            int distance = lidarLite->getDistance(*Lidar);
             if (distance < 0) {
                 int llError ;
-                llError = lidarLite->getError(Lidar) ;
+                llError = lidarLite->getError(*Lidar) ;
                 printf("Lidar-Lite error: %d\n",llError) ;
             } else {
-                int previousDistance = lidarLite->getPreviousDistance(Lidar);
+                int previousDistance = lidarLite->getPreviousDistance(*Lidar);
                 // printf("Distance: %dcm\n", dist);
-                int velocity = lidarLite->getVelocity();
+                int velocity = lidarLite->getVelocity(*Lidar);
                 printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
             }
         }
     }
-    lidar -> close_I2CDevice;
-    IMU ->close_I2CDevice;
+    Lidar -> close_I2CDevice();
+    IMU ->close_I2CDevice();
     delete Lidar;
     delete IMU;
     
