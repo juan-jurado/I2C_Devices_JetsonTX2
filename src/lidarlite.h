@@ -79,11 +79,12 @@ public:
     int           I2C_FileDescriptor;
     int           error;
 
-    bool  open_I2CDevice  ();
-    void  close_I2CDevice ();
     int   write_I2CDevice (int writeRegister, int wirteValue);
     int   read_I2CDevice  (int readRegister);
+  private:
 
+    bool  open_I2CDevice  ();
+    void  close_I2CDevice ();
 };
 
 class LidarLite
