@@ -32,38 +32,32 @@ int main() {
     // Objects belong to I2C Class
     I2C_Device *Lidar = new I2C_Device(1, kLidarLiteI2CAddress);
     I2C_Device *IMU   = new I2C_Device(1, ACCELEROMETER_I2CAddress);
-    
+    I2C_Device *NXP   = new I2C_Device(1, NXPS32K148_I2CAddress);
+
     LidarLite *lidarLite = new LidarLite();
-    
-    int err = Lidar->open_I2CDevice();
-    if (err < 0){
-        printf("Error: %d", Lidar->error);
-    } else {
 
-        int hardwareVersion = lidarLite->getHardwareVersion(*Lidar) ;
-        int softwareVersion = lidarLite->getSoftwareVersion(*Lidar) ;
-        printf("Hardware Version: %d\n",hardwareVersion) ;
-        printf("Software Version: %d\n",softwareVersion) ;
+    int hardwareVersion = lidarLite->getHardwareVersion(*Lidar) ;
+    int softwareVersion = lidarLite->getSoftwareVersion(*Lidar) ;
+    printf("Hardware Version: %d\n",hardwareVersion) ;
+    printf("Software Version: %d\n",softwareVersion) ;
 
-        // 27 is the ESC key
+    // 27 is the ESC key
 
-        while(Lidar->error >= 0 && getkey() != 27){
-            int distance = lidarLite->getDistance(*Lidar);
-            if (distance < 0) {
-                int llError ;
-                llError = lidarLite->getError(*Lidar) ;
-                printf("Lidar-Lite error: %d\n",llError) ;
-            } else {
-                int previousDistance = lidarLite->getPreviousDistance(*Lidar);
-                // printf("Distance: %dcm\n", dist);
-                int velocity = lidarLite->getVelocity(*Lidar);
-                printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
-            }
+    while(Lidar->error >= 0 && getkey() != 27){
+        int distance = lidarLite->getDistance(*Lidar);
+        if (distance < 0) {
+            int llError ;
+            llError = lidarLite->getError(*Lidar) ;
+            printf("Lidar-Lite error: %d\n",llError) ;
+        } else {
+            int previousDistance = lidarLite->getPreviousDistance(*Lidar);
+            // printf("Distance: %dcm\n", dist);
+            int velocity = lidarLite->getVelocity(*Lidar);
+            printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
     }
-    Lidar -> close_I2CDevice();
-    IMU ->close_I2CDevice();
+
     delete Lidar;
     delete IMU;
-    
+
 }

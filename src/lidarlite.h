@@ -1,19 +1,19 @@
 // lidarlite.h
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
 // The MIT License (MIT)
-// 
+//
 // Copyright (c) 2015 Jetsonhacks
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -44,11 +44,11 @@
 // I2C Slave Address
 #define kLidarLiteI2CAddress                    0x62
 // I2C NXP MCU
-#define NXPS32K144_I2CAddress                   0x18
+#define NXPS32K148_I2CAddress                   0x18
 // I2C IMU
 #define ACCELEROMETER_I2CAddress                0x45
 
-// Internal Control Registers 
+// Internal Control Registers
 #define kLidarLiteCommandControlRegister        0x00    // Command Control Register
 #define kLidarLiteVelocityMeasurementOutput     0x09    // Velocity [Read Only]: in .1 meters/sec (8 bit signed value)
 // High byte set means read two bytes
@@ -72,18 +72,18 @@
 class I2C_Device
 {
 public:
-    
-    char I2CDevice_Address;
-    unsigned char kI2CBus;
-    int I2C_FileDescriptor;
-    int error;
     I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address);
     ~I2C_Device() ;
-    bool open_I2CDevice();
-    void close_I2CDevice();
-    int write_I2CDevice(int writeRegister, int wirteValue);
-    int read_I2CDevice(int readRegister);
-    
+    char          I2CDevice_Address;
+    unsigned char kI2CBus;
+    int           I2C_FileDescriptor;
+    int           error;
+
+    bool  open_I2CDevice  ();
+    void  close_I2CDevice ();
+    int   write_I2CDevice (int writeRegister, int wirteValue);
+    int   read_I2CDevice  (int readRegister);
+
 };
 
 class LidarLite
@@ -91,19 +91,19 @@ class LidarLite
 public:
     //unsigned char kI2CBus ;         // I2C bus of the Lidar-Lite
     //int kI2CFileDescriptor ;        // File Descriptor to the Lidar-Lite
-    int error ;
+    int error;
     LidarLite();
-    ~LidarLite() ;
+    ~LidarLite();
     //bool openLidarLite() ;                   // Open the I2C bus to the Lidar-Lite
     //void closeLidarLite();                   // Close the I2C bus to the Lidar-Lite
     //int writeLidarLite(int writeRegister,int writeValue) ;
     //int readLidarLite(int readRegister) ;
-    int getDistance(I2C_Device& Lidar) ;
-    int getPreviousDistance( I2C_Device& Lidar) ;
-    int getVelocity(I2C_Device& Lidar) ;
-    int getHardwareVersion(I2C_Device& Lidar) ;
-    int getSoftwareVersion(I2C_Device& Lidar) ;
-    int getError(I2C_Device& Lidar) ;
+    int getDistance         (I2C_Device& Lidar) ;
+    int getPreviousDistance (I2C_Device& Lidar) ;
+    int getVelocity         (I2C_Device& Lidar) ;
+    int getHardwareVersion  (I2C_Device& Lidar) ;
+    int getSoftwareVersion  (I2C_Device& Lidar) ;
+    int getError            (I2C_Device& Lidar) ;
 
 };
 

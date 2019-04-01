@@ -1,4 +1,5 @@
 #include "lidarlite.h"
+#include <stdexcept>
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
 //2.000000
 
@@ -7,6 +8,11 @@ I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
     kI2CBus = _kI2CBus;                         // Desired I2C bus on Jetson TX2
     I2CDevice_Address = _I2CDevice_Address;     // Desired I2C Address on Device
     error = 0 ;
+    error = this->open_I2CDevice();
+    if(error < 0){
+      std::string errorMessage = std::string("Error: on opening device address")+I2CDevice_Address;
+      throw std::runtime_error(errorMessage);
+    }
 }
 
 I2C_Device::~I2C_Device()
@@ -31,7 +37,7 @@ bool I2C_Device::open_I2CDevice()
         error = errno ;
         return false ;
     }
-    
+
     return true ;
 }
 
