@@ -56,7 +56,6 @@ int main() {
             printf("Lidar-Lite error: %d\n",llError) ;
         } else {
             int previousDistance = lidarLite->getPreviousDistance(Lidar);
-            // printf("Distance: %dcm\n", dist);
             int velocity = lidarLite->getVelocity(Lidar);
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }

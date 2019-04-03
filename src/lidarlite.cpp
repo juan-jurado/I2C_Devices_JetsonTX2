@@ -73,6 +73,7 @@ int I2C_Device::read_I2CDevice(int readRegister)
 int I2C_Device::write_I2CDevice(int writeRegister, int writeValue)
 {
     int toReturn = i2c_smbus_write_byte_data(I2C_FileDescriptor, writeRegister, writeValue);
+    //i2c_smbus_write_byte() to write single byte.
     // Wait a little bit to make sure it settles
     usleep(10000);
     if (toReturn < 0) {
@@ -80,7 +81,6 @@ int I2C_Device::write_I2CDevice(int writeRegister, int writeValue)
         toReturn = -1 ;
     }
     return toReturn ;
-
 }
 
 LidarLite::LidarLite(){
