@@ -41,14 +41,14 @@ int main() {
 
     LidarLite *lidarLite = new LidarLite();
 
-    int hardwareVersion = lidarLite->getHardwareVersion(*Lidar) ;
-    int softwareVersion = lidarLite->getSoftwareVersion(*Lidar) ;
+    int hardwareVersion = lidarLite->getHardwareVersion(Lidar) ;
+    int softwareVersion = lidarLite->getSoftwareVersion(Lidar) ;
     printf("Hardware Version: %d\n",hardwareVersion) ;
     printf("Software Version: %d\n",softwareVersion) ;
 
     // 27 is the ESC key
-
-    while(Lidar->error >= 0 && getkey() != 27){
+#define ESC_key 27
+    while(Lidar->error >= 0 && getkey() != ESC_key){
         int distance = lidarLite->getDistance(Lidar);
         if (distance < 0) {
             int llError ;
