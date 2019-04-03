@@ -10,6 +10,7 @@ I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
     error = 0 ;
     error = this->open_I2CDevice();
     if(error < 0){
+      //STOPS EXECUTION
       std::string errorMessage = std::string("Error: on opening device address")+I2CDevice_Address;
       throw std::runtime_error(errorMessage);
     }
