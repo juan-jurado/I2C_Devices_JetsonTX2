@@ -93,18 +93,20 @@ public:
     //unsigned char kI2CBus ;         // I2C bus of the Lidar-Lite
     //int kI2CFileDescriptor ;        // File Descriptor to the Lidar-Lite
     int error;
+    LidarLite(I2C_Device* Lidar);
     LidarLite();
     ~LidarLite();
+    I2C_Device* Lidar_;
     //bool openLidarLite() ;                   // Open the I2C bus to the Lidar-Lite
     //void closeLidarLite();                   // Close the I2C bus to the Lidar-Lite
     //int writeLidarLite(int writeRegister,int writeValue) ;
     //int readLidarLite(int readRegister) ;
-    int getDistance         (I2C_Device* Lidar) ;
-    int getPreviousDistance (I2C_Device* Lidar) ;
-    int getVelocity         (I2C_Device* Lidar) ;
-    int getHardwareVersion  (I2C_Device* Lidar) ;
-    int getSoftwareVersion  (I2C_Device* Lidar) ;
-    int getError            (I2C_Device* Lidar) ;
+    int getDistance         () ;
+    int getPreviousDistance () ;
+    int getVelocity         () ;
+    int getHardwareVersion  () ;
+    int getSoftwareVersion  () ;
+    int getError            () ;
 
 };
 
