@@ -34,6 +34,11 @@ int main() {
     I2C_Device *IMU   = new I2C_Device(1, ACCELEROMETER_I2CAddress);
     I2C_Device *NXP   = new I2C_Device(1, NXPS32K148_I2CAddress);
 
+    std::vector<I2C_Device*> I2C_BUS1;
+    I2C_BUS1.push_back(Lidar);
+    I2C_BUS1.push_back(IMU);
+    I2C_BUS1.push_back(NXP);
+
     LidarLite *lidarLite = new LidarLite();
 
     int hardwareVersion = lidarLite->getHardwareVersion(*Lidar) ;
@@ -44,15 +49,15 @@ int main() {
     // 27 is the ESC key
 
     while(Lidar->error >= 0 && getkey() != 27){
-        int distance = lidarLite->getDistance(*Lidar);
+        int distance = lidarLite->getDistance(Lidar);
         if (distance < 0) {
             int llError ;
-            llError = lidarLite->getError(*Lidar) ;
+            llError = lidarLite->getError(Lidar) ;
             printf("Lidar-Lite error: %d\n",llError) ;
         } else {
-            int previousDistance = lidarLite->getPreviousDistance(*Lidar);
+            int previousDistance = lidarLite->getPreviousDistance(Lidar);
             // printf("Distance: %dcm\n", dist);
-            int velocity = lidarLite->getVelocity(*Lidar);
+            int velocity = lidarLite->getVelocity(Lidar);
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
     }

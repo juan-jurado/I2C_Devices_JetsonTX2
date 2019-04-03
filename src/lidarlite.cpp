@@ -89,21 +89,21 @@ LidarLite::LidarLite(){
 }
 
 // Return the current calculated distance in centimeters
-int LidarLite::getDistance(I2C_Device& Lidar)
+int LidarLite::getDistance(I2C_Device* Lidar)
 {
     int ioResult ;
     int msb, lsb ;
-    ioResult = Lidar.write_I2CDevice(kLidarLiteCommandControlRegister,kLidarLiteMeasure);
+    ioResult = Lidar->write_I2CDevice(kLidarLiteCommandControlRegister,kLidarLiteMeasure);
     if (ioResult < 0) {
         return ioResult ;
     }
-    ioResult = Lidar.read_I2CDevice(kLidarLiteCalculateDistanceMSB);
+    ioResult = Lidar->read_I2CDevice(kLidarLiteCalculateDistanceMSB);
     if (ioResult < 0) {
         return ioResult ;
     } else {
         msb = ioResult ;
     }
-    ioResult = Lidar.read_I2CDevice(kLidarLiteCalculateDistanceLSB);
+    ioResult = Lidar->read_I2CDevice(kLidarLiteCalculateDistanceLSB);
     if (ioResult < 0) {
         return ioResult ;
     } else {
@@ -116,17 +116,17 @@ int LidarLite::getDistance(I2C_Device& Lidar)
 }
 
 // Return the previous measurement in centimeters
-int LidarLite::getPreviousDistance(I2C_Device& Lidar) {
+int LidarLite::getPreviousDistance(I2C_Device* Lidar) {
 
     int ioResult ;
     int msb, lsb ;
-    ioResult = Lidar.read_I2CDevice(kLidarLitePreviousMeasuredDistanceMSB);
+    ioResult = Lidar->read_I2CDevice(kLidarLitePreviousMeasuredDistanceMSB);
     if (ioResult < 0) {
         return ioResult ;
     } else {
         msb = ioResult ;
     }
-    ioResult = Lidar.read_I2CDevice(kLidarLitePreviousMeasuredDistanceLSB);
+    ioResult = Lidar->read_I2CDevice(kLidarLitePreviousMeasuredDistanceLSB);
     if (ioResult < 0) {
         return ioResult ;
     } else {
@@ -141,9 +141,9 @@ int LidarLite::getPreviousDistance(I2C_Device& Lidar) {
 // Return the velocity (rate of change) in centimeters; +/-
 // Velocity is returned from the Lidar-Lite as an 8-bit 2's complement number
 // The returned value is converted to a signed integer
-int LidarLite::getVelocity(I2C_Device& Lidar)
+int LidarLite::getVelocity(I2C_Device* Lidar)
 {
-    int ioResult = Lidar.read_I2CDevice(kLidarLiteVelocityMeasurementOutput);
+    int ioResult = Lidar->read_I2CDevice(kLidarLiteVelocityMeasurementOutput);
     if (ioResult == 255) {
         return 0 ;
     }
@@ -155,18 +155,18 @@ int LidarLite::getVelocity(I2C_Device& Lidar)
 }
 
 // Return the Lidar-Lite hardware version
-int LidarLite::getHardwareVersion(I2C_Device& Lidar)
+int LidarLite::getHardwareVersion(I2C_Device* Lidar)
 {
-    return Lidar.read_I2CDevice(kLidarLiteHardwareVersion) ;
+    return Lidar->read_I2CDevice(kLidarLiteHardwareVersion) ;
 }
 
 // Return the Lidar-Lite software version
-int LidarLite::getSoftwareVersion(I2C_Device& Lidar) {
-    return Lidar.read_I2CDevice(kLidarLiteSoftwareVersion) ;
+int LidarLite::getSoftwareVersion(I2C_Device* Lidar) {
+    return Lidar->read_I2CDevice(kLidarLiteSoftwareVersion) ;
 }
 
 // Return the last i/o error
-int LidarLite::getError(I2C_Device& Lidar)
+int LidarLite::getError(I2C_Device* Lidar)
 {
-    return Lidar.error ;
+    return Lidar->error ;
 }
