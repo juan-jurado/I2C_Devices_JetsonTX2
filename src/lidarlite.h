@@ -111,6 +111,11 @@ public:
     I2C_Device* Lidar_;
 
 };
+union float_to_hex {
+  float flotante;
+  std::uint32_t hex;
+};
+
 class NXPs32k148
 {
 public:
@@ -121,9 +126,10 @@ public:
   void set_reference_points(float acc, float dir, float brk);
 private:
   I2C_Device* NXP_;
-  float acceleration_;
-  float direction_;
-  float break_;
+
+  float_to_hex acceleration_  = {0.0};
+  float_to_hex direction_     = {0.0};
+  float_to_hex break_         = {0.0};
 }
 
 #endif // LIDARLITE_H

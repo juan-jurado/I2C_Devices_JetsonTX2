@@ -160,7 +160,10 @@ NXPs32k148::~NXPs32k148(I2C_Device* NXP){
   delete NXP_;
 }
 void set_reference_points(float acc, float dir, float brk){
-  acceleration_ = acc;
-  direction_    = dir;
-  break_        = brk;
+  acceleration_.flotante = acc;
+  direction_.flotante    = dir;
+  break_.flotante        = brk;
+}
+bool send_acceleration_breaking_direction(){
+  if()
 }
