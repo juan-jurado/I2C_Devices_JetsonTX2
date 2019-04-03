@@ -61,7 +61,6 @@ int main() {
         }
     }
     delete lidarLite;
-    
     delete IMU;
     delete NXP;
 

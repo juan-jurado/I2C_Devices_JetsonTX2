@@ -73,7 +73,7 @@ LidarLite::LidarLite(){
 	error = 0;
 }
 LidarLite::~LidarLite(){
-  delete Lidar;
+  delete Lidar_;
 }
 LidarLite::LidarLite(I2C_Device* Lidar){
 	error = 0;
@@ -151,4 +151,16 @@ int LidarLite::getSoftwareVersion() {
 // Return the last i/o error
 int LidarLite::getError(){
     return Lidar_->error ;
+}
+
+NXPs32k148::NXPs32k148(I2C_Device* NXP){
+  NXP_ = NXP;
+}
+NXPs32k148::~NXPs32k148(I2C_Device* NXP){
+  delete NXP_;
+}
+void set_reference_points(float acc, float dir, float brk){
+  acceleration_ = acc;
+  direction_    = dir;
+  break_        = brk;
 }

@@ -96,7 +96,7 @@ public:
     LidarLite(I2C_Device* Lidar);
     LidarLite();
     ~LidarLite();
-    I2C_Device* Lidar_;
+
     //bool openLidarLite() ;                   // Open the I2C bus to the Lidar-Lite
     //void closeLidarLite();                   // Close the I2C bus to the Lidar-Lite
     //int writeLidarLite(int writeRegister,int writeValue) ;
@@ -107,7 +107,23 @@ public:
     int getHardwareVersion  () ;
     int getSoftwareVersion  () ;
     int getError            () ;
+  private:
+    I2C_Device* Lidar_;
 
 };
+class NXPs32k148
+{
+public:
+  NXPs32k148(I2C_Device* NXP);
+  ~NXPs32k148();
+  /**Manda la información cada 10ms*/
+  bool send_acceleration_breaking_direction();
+  void set_reference_points(float acc, float dir, float brk);
+private:
+  I2C_Device* NXP_;
+  float acceleration_;
+  float direction_;
+  float break_;
+}
 
 #endif // LIDARLITE_H
