@@ -63,5 +63,6 @@ int main() {
 
     delete Lidar;
     delete IMU;
+    delete NXP;
 
 }
