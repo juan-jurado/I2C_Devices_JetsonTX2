@@ -3,8 +3,7 @@
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
 //2.000000
 
-I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
-{
+I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address){
     kI2CBus = _kI2CBus;                         // Desired I2C bus on Jetson TX2
     I2CDevice_Address = _I2CDevice_Address;     // Desired I2C Address on Device
     error = 0 ;
@@ -15,16 +14,11 @@ I2C_Device::I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address)
       throw std::runtime_error(errorMessage);
     }
 }
-
-I2C_Device::~I2C_Device()
-{
+I2C_Device::~I2C_Device(){
     close_I2CDevice();
 }
-
 // Returns true if device file descriptor opens correctly, false otherwise
-
-bool I2C_Device::open_I2CDevice()
-{
+bool I2C_Device::open_I2CDevice(){
     char fileNameBuffer[32];
     sprintf(fileNameBuffer,"/dev/i2c-%d", kI2CBus);
     I2C_FileDescriptor = open(fileNameBuffer, O_RDWR);
@@ -38,22 +32,17 @@ bool I2C_Device::open_I2CDevice()
         error = errno ;
         return false ;
     }
-
     return true ;
 }
-
-void I2C_Device::close_I2CDevice()
-{
+void I2C_Device::close_I2CDevice(){
     if (I2C_FileDescriptor > 0) {
         close(I2C_FileDescriptor);
         // WARNING - This is not quite right, need to check for error first
         I2C_FileDescriptor = -1 ;
     }
 }
-
 // Read the given register on the Lidar-Lite
-int I2C_Device::read_I2CDevice(int readRegister)
-{
+int I2C_Device::read_I2CDevice(int readRegister){
     // Do not use i2c_smbus_read_byte_data here ; LidarLite V2 needs STOP between write and read
     int toReturn ;
     toReturn = i2c_smbus_write_byte(I2C_FileDescriptor, readRegister) ;
@@ -68,10 +57,8 @@ int I2C_Device::read_I2CDevice(int readRegister)
     }
     return toReturn ;
 }
-
 // Write the the given value to the given register on the Lidar-Lite
-int I2C_Device::write_I2CDevice(int writeRegister, int writeValue)
-{
+int I2C_Device::write_I2CDevice(int writeRegister, int writeValue){
     int toReturn = i2c_smbus_write_byte_data(I2C_FileDescriptor, writeRegister, writeValue);
     //i2c_smbus_write_byte() to write single byte.
     // Wait a little bit to make sure it settles
@@ -82,19 +69,18 @@ int I2C_Device::write_I2CDevice(int writeRegister, int writeValue)
     }
     return toReturn ;
 }
-
 LidarLite::LidarLite(){
 	error = 0;
 }
-
+LidarLite::~LidarLite(){
+  delete Lidar;
+}
 LidarLite::LidarLite(I2C_Device* Lidar){
 	error = 0;
   Lidar_ = Lidar;
 }
-
 // Return the current calculated distance in centimeters
-int LidarLite::getDistance()
-{
+int LidarLite::getDistance(){
     int ioResult ;
     int msb, lsb ;
     ioResult = Lidar_->write_I2CDevice(kLidarLiteCommandControlRegister,kLidarLiteMeasure);
@@ -118,7 +104,6 @@ int LidarLite::getDistance()
 
     return distance ;
 }
-
 // Return the previous measurement in centimeters
 int LidarLite::getPreviousDistance() {
 
@@ -141,12 +126,10 @@ int LidarLite::getPreviousDistance() {
 
     return distance ;
 }
-
 // Return the velocity (rate of change) in centimeters; +/-
 // Velocity is returned from the Lidar-Lite as an 8-bit 2's complement number
 // The returned value is converted to a signed integer
-int LidarLite::getVelocity()
-{
+int LidarLite::getVelocity(){
     int ioResult = Lidar_->read_I2CDevice(kLidarLiteVelocityMeasurementOutput);
     if (ioResult == 255) {
         return 0 ;
@@ -157,20 +140,15 @@ int LidarLite::getVelocity()
     }
     return ioResult ;
 }
-
 // Return the Lidar-Lite hardware version
-int LidarLite::getHardwareVersion()
-{
+int LidarLite::getHardwareVersion(){
     return Lidar_->read_I2CDevice(kLidarLiteHardwareVersion) ;
 }
-
 // Return the Lidar-Lite software version
 int LidarLite::getSoftwareVersion() {
     return Lidar_->read_I2CDevice(kLidarLiteSoftwareVersion) ;
 }
-
 // Return the last i/o error
-int LidarLite::getError()
-{
+int LidarLite::getError(){
     return Lidar_->error ;
 }

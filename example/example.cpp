@@ -39,29 +39,29 @@ int main() {
     I2C_BUS1.push_back(IMU);
     I2C_BUS1.push_back(NXP);
 
-    LidarLite *lidarLite = new LidarLite();
+    LidarLite *lidarLite = new LidarLite(Lidar);
 
-    int hardwareVersion = lidarLite->getHardwareVersion(Lidar) ;
-    int softwareVersion = lidarLite->getSoftwareVersion(Lidar) ;
+    int hardwareVersion = lidarLite->getHardwareVersion() ;
+    int softwareVersion = lidarLite->getSoftwareVersion() ;
     printf("Hardware Version: %d\n",hardwareVersion) ;
     printf("Software Version: %d\n",softwareVersion) ;
 
     // 27 is the ESC key
 #define ESC_key 27
     while(Lidar->error >= 0 && getkey() != ESC_key){
-        int distance = lidarLite->getDistance(Lidar);
+        int distance = lidarLite->getDistance();
         if (distance < 0) {
             int llError ;
-            llError = lidarLite->getError(Lidar) ;
+            llError = lidarLite->getError() ;
             printf("Lidar-Lite error: %d\n",llError) ;
         } else {
-            int previousDistance = lidarLite->getPreviousDistance(Lidar);
-            int velocity = lidarLite->getVelocity(Lidar);
+            int previousDistance = lidarLite->getPreviousDistance();
+            int velocity = lidarLite->getVelocity();
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
     }
-
-    delete Lidar;
+    delete lidarLite;
+    
     delete IMU;
     delete NXP;
 
