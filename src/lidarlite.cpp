@@ -1,5 +1,6 @@
 #include "lidarlite.h"
 #include <stdexcept>
+
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
 //2.000000
 
@@ -164,6 +165,13 @@ void set_reference_points(float acc, float dir, float brk){
   direction_.flotante    = dir;
   break_.flotante        = brk;
 }
+NXPs32k148::std::uint8_t get_n_byte(std::uint32_t un, int pos){
+  int ret;
+  if(pos > 3){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
+  else {ret = 0;}
+	return ret;
+}
+//abrir esta funcion en un hilo
 bool send_acceleration_breaking_direction(){
-  if()
+  if(){}
 }

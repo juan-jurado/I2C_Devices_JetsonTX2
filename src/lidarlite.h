@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-
+#define bits_in_byte 8
 // Information taken from PulsedLight knowledge base 5-4-15
 // Internal Control Registers
 // http://kb.pulsedlight3d.com/support/solutions/articles/5000549552-detailed-register-descriptions-internal
@@ -125,8 +125,9 @@ public:
   bool send_acceleration_breaking_direction();
   void set_reference_points(float acc, float dir, float brk);
 private:
+  std::thread* sending;
   I2C_Device* NXP_;
-
+  std::uint8_t get_n_byte(std::uint32_t un, int pos);
   float_to_hex acceleration_  = {0.0};
   float_to_hex direction_     = {0.0};
   float_to_hex break_         = {0.0};
