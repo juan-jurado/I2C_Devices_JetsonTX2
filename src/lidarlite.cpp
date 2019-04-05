@@ -208,7 +208,10 @@ void NXPs32k148::send_acceleration_breaking_direction(){
             bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));
           }
         }
-        NXP_->write_I2CDevice_block_of_u8(bytes_a_mandar);
+        if(NXP_->write_I2CDevice_block_of_u8(bytes_a_mandar) == -1){
+          std::cout << "Error en el bus i2c: errno -> " << error << std::endl;
+        }
+        bytes_a_mandar.clear();
 
     }
 }
