@@ -1,5 +1,7 @@
 #include "lidarlite.h"
 #include <stdexcept>
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
 
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
 //2.000000
@@ -79,6 +81,7 @@ LidarLite::~LidarLite(){
 LidarLite::LidarLite(I2C_Device* Lidar){
 	error = 0;
   Lidar_ = Lidar;
+
 }
 // Return the current calculated distance in centimeters
 int LidarLite::getDistance(){
@@ -156,22 +159,34 @@ int LidarLite::getError(){
 
 NXPs32k148::NXPs32k148(I2C_Device* NXP){
   NXP_ = NXP;
+  sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
+  time10ms_count_ = Clock::now();
 }
-NXPs32k148::~NXPs32k148(I2C_Device* NXP){
+NXPs32k148::~NXPs32k148(){
   delete NXP_;
+  kill_i2c_thread = 1;
+  sending_.join();
 }
-void set_reference_points(float acc, float dir, float brk){
+void NXPs32k148::set_reference_points(float acc, float dir, float brk){
   acceleration_.flotante = acc;
   direction_.flotante    = dir;
   break_.flotante        = brk;
 }
-NXPs32k148::std::uint8_t get_n_byte(std::uint32_t un, int pos){
+std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
   int ret;
   if(pos > 3){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
   else {ret = 0;}
 	return ret;
 }
 //abrir esta funcion en un hilo
-bool send_acceleration_breaking_direction(){
-  if(){}
+void NXPs32k148::send_acceleration_breaking_direction(){
+    while(1){
+        while((time10ms_count_.time_since_epoch()) < std::chrono::nanoseconds(10000000)){}
+  //Reset clock after 10000us duration
+        time10ms_count_ = Clock::now();
+        if(kill_i2c_thread){break;}
+  //mandar datos de i2c
+        NXP_->
+
+    }
 }

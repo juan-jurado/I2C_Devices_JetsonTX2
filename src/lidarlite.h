@@ -33,6 +33,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <iostream>
+#include <vector>
+#include <thread>
+#include <pthread.h>
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
 
 #define bits_in_byte 8
 // Information taken from PulsedLight knowledge base 5-4-15
@@ -81,7 +87,7 @@ public:
 
     int   write_I2CDevice (int writeRegister, int writeValue);
     int   read_I2CDevice  (int readRegister);
-  private:
+private:
 
     bool  open_I2CDevice  ();
     void  close_I2CDevice ();
@@ -122,15 +128,17 @@ public:
   NXPs32k148(I2C_Device* NXP);
   ~NXPs32k148();
   /**Manda la información cada 10ms*/
-  bool send_acceleration_breaking_direction();
+  void send_acceleration_breaking_direction();
   void set_reference_points(float acc, float dir, float brk);
 private:
-  std::thread* sending;
+  Clock::time_point time10ms_count_;
+  std::thread sending_;
   I2C_Device* NXP_;
   std::uint8_t get_n_byte(std::uint32_t un, int pos);
   float_to_hex acceleration_  = {0.0};
   float_to_hex direction_     = {0.0};
   float_to_hex break_         = {0.0};
-}
+  kill_i2c_thread = 0;
+};
 
 #endif // LIDARLITE_H
