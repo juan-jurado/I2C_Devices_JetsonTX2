@@ -126,19 +126,24 @@ union float_to_hex {
 class NXPs32k148
 {
 public:
+  int error;
   NXPs32k148(I2C_Device* NXP);
   ~NXPs32k148();
   /**Manda la información cada 10ms*/
   void send_acceleration_breaking_direction();
   void set_reference_points(float acc, float dir, float brk);
 private:
+
+  std::uint8_t get_n_byte(std::uint32_t un, int pos);
   Clock::time_point time10ms_count_;
   std::thread sending_;
   I2C_Device* NXP_;
   std::uint8_t get_n_byte(std::uint32_t un, int pos);
-  float_to_hex acceleration_  = {0.0};
-  float_to_hex direction_     = {0.0};
-  float_to_hex break_         = {0.0};
+
+  float_to_hex* acceleration_  = {0.0};
+  float_to_hex* direction_     = {0.0};
+  float_to_hex* break_         = {0.0};
+  std::array<float_to_hex,3> data_to_send = {{{acceleration_},{direction_},{break_}}}:
   kill_i2c_thread = 0;
 };
 
