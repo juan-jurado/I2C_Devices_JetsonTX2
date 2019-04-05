@@ -1,2 +1,2 @@
 all:
-	g++ example.cpp ../src/lidarlite.cpp -I../src -o example
+	g++ -std=c++11 example.cpp ../src/lidarlite.cpp -I../src -o example -lpthread
