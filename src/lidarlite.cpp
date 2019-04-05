@@ -193,7 +193,7 @@ std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
 std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
 	return (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);
 }
-//abrir esta funcion en un hilo
+//Esta función se abre en un hilo
 void NXPs32k148::send_acceleration_breaking_direction(){
     std::vector<std::uint8_t> bytes_a_mandar;
     while(1){
