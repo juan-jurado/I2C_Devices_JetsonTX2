@@ -65,13 +65,20 @@ int I2C_Device::write_I2CDevice(int writeRegister, int writeValue){
     int toReturn = i2c_smbus_write_byte_data(I2C_FileDescriptor, writeRegister, writeValue);
     //i2c_smbus_write_byte() to write single byte.
     // Wait a little bit to make sure it settles
-    usleep(10000);
+    //usleep(10000);
     if (toReturn < 0) {
         error = errno ;
         toReturn = -1 ;
     }
     return toReturn ;
 }
+int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques){
+    //int i2c_master_send               (const struct i2c_client *client, const char *buf, int count)
+    //s32 i2c_smbus_write_block_data    (const struct i2c_client *client, u8 command, u8 length, const u8 *values)
+    //s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command, u8 length, const u8 *values)
+    i2c_master_send(I2C_FileDescriptor, (const char*)bloques.begin(), bloques.size());
+}
+
 LidarLite::LidarLite(){
 	error = 0;
 }

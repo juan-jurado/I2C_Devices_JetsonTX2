@@ -86,6 +86,7 @@ public:
     int           error;
 
     int   write_I2CDevice (int writeRegister, int writeValue);
+    int   write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques)
     int   read_I2CDevice  (int readRegister);
 private:
 
