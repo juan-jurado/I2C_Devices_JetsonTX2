@@ -1,6 +1,8 @@
 #include "lidarlite.h"
 #include <stdexcept>
 #include <chrono>
+
+
 typedef std::chrono::high_resolution_clock Clock;
 
 // Interface for Lidar-Lite V2 (Blue Label) with NVIDIA Jetson TK1
@@ -72,11 +74,12 @@ int I2C_Device::write_I2CDevice(int writeRegister, int writeValue){
     }
     return toReturn ;
 }
-int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques){
+int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques ){
     //int i2c_master_send               (const struct i2c_client *client, const char *buf, int count)
     //s32 i2c_smbus_write_block_data    (const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command, u8 length, const u8 *values)
-    int toReturn = i2c_master_send(I2C_FileDescriptor, (const char*)bloques.begin(), bloques.size());
+    //el primer byte mandado va a ser 0
+    int toReturn = i2c_smbus_write_block_data(I2C_FileDescriptor, 0, bloques.size(), &bloques[0]);
     if(toReturn < 0){
       error = errno;
       toReturn = -1;
@@ -180,9 +183,11 @@ NXPs32k148::~NXPs32k148(){
   sending_.join();
 }
 void NXPs32k148::set_reference_points(float acc, float dir, float brk){
-  acceleration_->flotante = acc;
-  direction_->flotante    = dir;
-  break_->flotante        = brk;
+  mtx.lock();
+  acceleration_.flotante = acc;
+  direction_.flotante    = dir;
+  break_.flotante        = brk;
+  mtx.unlock();
 }
 std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
   int ret;
@@ -190,9 +195,7 @@ std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
   else {ret = 0;}
 	return ret;
 }
-std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
-	return (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);
-}
+
 //Esta función se abre en un hilo
 void NXPs32k148::send_acceleration_breaking_direction(){
     std::vector<std::uint8_t> bytes_a_mandar;
@@ -205,7 +208,9 @@ void NXPs32k148::send_acceleration_breaking_direction(){
 #define BYTES_PER_FLOAT 4
         for(int data = 0; data < data_to_send.size(); data++){
           for(int i = 0; i < BYTES_PER_FLOAT; i++){
+            mtx.lock();
             bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));
+            mtx.unlock();
           }
         }
         int check = NXP_->write_I2CDevice_block_of_u8(bytes_a_mandar);

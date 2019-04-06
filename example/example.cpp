@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <time.h>
 #include <lidarlite.h>
+#include <math.h>
 
 int getkey() {
     int character;
@@ -39,16 +40,20 @@ int main() {
     I2C_BUS1.push_back(IMU);
     I2C_BUS1.push_back(NXP);
 
-    LidarLite *lidarLite = new LidarLite(Lidar);
+    LidarLite *lidarLite 	= new LidarLite(Lidar);
+    NXPs32k148 *board		= new NXPs32k148(NXP);
 
     int hardwareVersion = lidarLite->getHardwareVersion() ;
     int softwareVersion = lidarLite->getSoftwareVersion() ;
     printf("Hardware Version: %d\n",hardwareVersion) ;
     printf("Software Version: %d\n",softwareVersion) ;
+    float counter = 250;
+    time_t timer1,timer2;
+    time(&timer1);
 
     // 27 is the ESC key
 #define ESC_key 27
-    while(Lidar->error >= 0 && getkey() != ESC_key){
+    while(Lidar->error >= 0 && getkey() != ESC_key ){
         int distance = lidarLite->getDistance();
         if (distance < 0) {
             int llError ;
@@ -59,6 +64,14 @@ int main() {
             int velocity = lidarLite->getVelocity();
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
+        time(&timer2);
+        if(difftime(timer2,timer1) > 3){
+			counter+=20;
+			time(&timer1);//restart timer
+			board->set_reference_points(counter,counter,counter);
+		}
+        
+
     }
     delete lidarLite;
     delete IMU;

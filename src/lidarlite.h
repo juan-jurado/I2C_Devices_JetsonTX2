@@ -38,6 +38,8 @@
 #include <thread>
 #include <pthread.h>
 #include <chrono>
+//thread safe types
+#include <mutex>
 typedef std::chrono::high_resolution_clock Clock;
 
 #define bits_in_byte 8
@@ -86,7 +88,7 @@ public:
     int           error;
 
     int   write_I2CDevice (int writeRegister, int writeValue);
-    int   write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques)
+    int   write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques);
     int   read_I2CDevice  (int readRegister);
 private:
 
@@ -130,21 +132,22 @@ public:
   NXPs32k148(I2C_Device* NXP);
   ~NXPs32k148();
   /**Manda la información cada 10ms*/
-  void send_acceleration_breaking_direction();
+  
   void set_reference_points(float acc, float dir, float brk);
 private:
-
+  std::mutex mtx;
   std::uint8_t get_n_byte(std::uint32_t un, int pos);
   Clock::time_point time10ms_count_;
   std::thread sending_;
+  void send_acceleration_breaking_direction();
   I2C_Device* NXP_;
-  std::uint8_t get_n_byte(std::uint32_t un, int pos);
-
-  float_to_hex* acceleration_  = {0.0};
-  float_to_hex* direction_     = {0.0};
-  float_to_hex* break_         = {0.0};
-  std::array<float_to_hex,3> data_to_send = {{{acceleration_},{direction_},{break_}}}:
-  kill_i2c_thread = 0;
+  //Se usa la union para estar checando constantemente el numero ingresado al float pero en hexadecimal.
+  float_to_hex acceleration_  = {0.0};
+  float_to_hex direction_     = {0.0};
+  float_to_hex break_         = {0.0};
+  //Mete los 3 floats dentro del arreglo
+  std::array<float_to_hex*,3> data_to_send = {{{&acceleration_},{&direction_},{&break_}}};
+  bool kill_i2c_thread = 0;
 };
 
 #endif // LIDARLITE_H
