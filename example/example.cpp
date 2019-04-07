@@ -50,13 +50,13 @@ int main() {
     float counter = 250;
     time_t timer1,timer2;
     time(&timer1);
-    board->set_reference_points(counter,counter,counter);
-    board->send_acceleration_breaking_direction_one_time();
-/*
+    //board->set_reference_points(counter,counter+2,counter+4);
+    //board->send_acceleration_breaking_direction_one_time();
+
     // 27 is the ESC key
 #define ESC_key 27
     while(Lidar->error >= 0 && getkey() != ESC_key ){
-        int distance = lidarLite->getDistance();
+        /*int distance = lidarLite->getDistance();
         if (distance < 0) {
             int llError ;
             llError = lidarLite->getError() ;
@@ -66,18 +66,20 @@ int main() {
             int velocity = lidarLite->getVelocity();
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
+        * */
         time(&timer2);
-        if(difftime(timer2,timer1) > 3){//seconds
+        if(difftime(timer2,timer1) > 2){//seconds
 			counter+=20;
 			time(&timer1);//restart timer
-			board->set_reference_points(counter,counter,counter);
+			board->set_reference_points(counter,counter+1,counter+2);
+			//break;
 		}
         
 
     }
-*/
+
     delete lidarLite;
     delete IMU;
-    delete NXP;
+    delete board;
 
 }

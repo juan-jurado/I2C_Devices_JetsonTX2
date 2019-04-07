@@ -180,13 +180,14 @@ int LidarLite::getError(){
 
 NXPs32k148::NXPs32k148(I2C_Device* NXP){
   NXP_ = NXP;
-  //sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
+  sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
   time10ms_count_ = Clock::now();
 }
 NXPs32k148::~NXPs32k148(){
   delete NXP_;
   kill_i2c_thread = 1;
   sending_.join();
+  std::cout << "Count cycles = " << count_cycles << std::endl;
 }
 void NXPs32k148::set_reference_points(float acc, float dir, float brk){
   mtx.lock();
@@ -194,10 +195,11 @@ void NXPs32k148::set_reference_points(float acc, float dir, float brk){
   direction_.flotante    = dir;
   break_.flotante        = brk;
   mtx.unlock();
+  std::cout << "representacion en hexadecimal de :" << acceleration_.flotante << " es :" << std::hex << (int)acceleration_.hex << std::endl;
 }
 std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
   int ret;
-  if(pos < 3){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
+  if(pos < 4){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
   else {ret = 0;}
 	return ret;
 }
@@ -209,11 +211,11 @@ void NXPs32k148::send_acceleration_breaking_direction_one_time(){
         time10ms_count_ = Clock::now();
   //mandar datos de i2c
 #define BYTES_PER_FLOAT 4
-        for(int data = 0; data < data_to_send.size(); data++){
+        for(unsigned int data = 0; data < data_to_send.size(); data++){
           for(int i = 0; i < BYTES_PER_FLOAT; i++){
             //convertir info
             bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));
-            std::cout << "bytes a mandar "<< data*4+i+1 << " = " << std::hex << bytes_a_mandar.at(data*4+i) << std::endl;
+            std::cout << "bytes a mandar "<< data*4+i+1 << " = " << std::hex << (int)bytes_a_mandar.at(data*4+i) << std::endl;
             
           }
         }
@@ -233,13 +235,14 @@ void NXPs32k148::send_acceleration_breaking_direction_one_time(){
 void NXPs32k148::send_acceleration_breaking_direction(){
     std::vector<std::uint8_t> bytes_a_mandar;
     while(1){
-        while((time10ms_count_.time_since_epoch()) < std::chrono::nanoseconds(10000000)){}
+		count_cycles++;
+        while((time10ms_count_.time_since_epoch()) < std::chrono::nanoseconds(10000000)){}//alv quitar esto
   //Reset clock after 10000us duration
         time10ms_count_ = Clock::now();
         if(kill_i2c_thread){break;}
   //mandar datos de i2c
 //#define BYTES_PER_FLOAT 4
-        for(int data = 0; data < data_to_send.size(); data++){
+        for(unsigned int data = 0; data < data_to_send.size(); data++){
           for(int i = 0; i < BYTES_PER_FLOAT; i++){
             mtx.lock();
             bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));

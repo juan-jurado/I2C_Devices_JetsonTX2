@@ -149,6 +149,7 @@ private:
   //Mete los 3 floats dentro del arreglo
   std::array<float_to_hex*,3> data_to_send = {{{&acceleration_},{&direction_},{&break_}}};
   bool kill_i2c_thread = 0;
+  double count_cycles = 0;
 };
 
 #endif // LIDARLITE_H
