@@ -1,7 +1,7 @@
 #include "lidarlite.h"
 #include <stdexcept>
 #include <chrono>
-
+#include <cstdint>
 
 typedef std::chrono::high_resolution_clock Clock;
 
@@ -79,7 +79,13 @@ int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques ){
     //s32 i2c_smbus_write_block_data    (const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //el primer byte mandado va a ser 0
-    int toReturn = i2c_smbus_write_block_data(I2C_FileDescriptor, 0, bloques.size(), &bloques[0]);
+    
+    for (unsigned int i = 0; i < bloques.size(); i++){
+		std::cout << "Dato mandado = " << bloques.at(i)<< std::endl;
+	}
+    
+    std::cout << "se enviaran " << bloques.size() << " datos \n";
+    int toReturn = i2c_smbus_write_block_data(I2C_FileDescriptor, 0x23, bloques.size(), &bloques[0]);
     if(toReturn < 0){
       error = errno;
       toReturn = -1;
@@ -174,7 +180,7 @@ int LidarLite::getError(){
 
 NXPs32k148::NXPs32k148(I2C_Device* NXP){
   NXP_ = NXP;
-  sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
+  //sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
   time10ms_count_ = Clock::now();
 }
 NXPs32k148::~NXPs32k148(){
@@ -191,9 +197,36 @@ void NXPs32k148::set_reference_points(float acc, float dir, float brk){
 }
 std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
   int ret;
-  if(pos > 3){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
+  if(pos < 3){ret = (std::uint8_t)((un >> pos*bits_in_byte) & 0x000000FF);}
   else {ret = 0;}
 	return ret;
+}
+
+void NXPs32k148::send_acceleration_breaking_direction_one_time(){
+    std::vector<std::uint8_t> bytes_a_mandar;
+    
+  //Reset clock after 10000us duration
+        time10ms_count_ = Clock::now();
+  //mandar datos de i2c
+#define BYTES_PER_FLOAT 4
+        for(int data = 0; data < data_to_send.size(); data++){
+          for(int i = 0; i < BYTES_PER_FLOAT; i++){
+            //convertir info
+            bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));
+            std::cout << "bytes a mandar "<< data*4+i+1 << " = " << std::hex << bytes_a_mandar.at(data*4+i) << std::endl;
+            
+          }
+        }
+        int check = NXP_->write_I2CDevice_block_of_u8(bytes_a_mandar);
+        if(check == -1){
+          std::cout << "Error en el bus i2c: errno -> " << error << std::endl;
+        }
+        else {
+          std::cout << "Se escribieron correctamente " << check << " bytes a traves de i2c\n";
+        }
+        bytes_a_mandar.clear();
+
+    
 }
 
 //Esta función se abre en un hilo
@@ -205,7 +238,7 @@ void NXPs32k148::send_acceleration_breaking_direction(){
         time10ms_count_ = Clock::now();
         if(kill_i2c_thread){break;}
   //mandar datos de i2c
-#define BYTES_PER_FLOAT 4
+//#define BYTES_PER_FLOAT 4
         for(int data = 0; data < data_to_send.size(); data++){
           for(int i = 0; i < BYTES_PER_FLOAT; i++){
             mtx.lock();
@@ -218,7 +251,7 @@ void NXPs32k148::send_acceleration_breaking_direction(){
           std::cout << "Error en el bus i2c: errno -> " << error << std::endl;
         }
         else {
-          std::cout << "Se escribieron correctamente " << check << "bytes a traves de i2c\n";
+          std::cout << "Se escribieron correctamente " << check << " bytes a traves de i2c\n";
         }
         bytes_a_mandar.clear();
 

@@ -52,7 +52,7 @@ typedef std::chrono::high_resolution_clock Clock;
 // I2C Slave Address
 #define kLidarLiteI2CAddress                    0x62
 // I2C NXP MCU
-#define NXPS32K148_I2CAddress                   0x18
+#define NXPS32K148_I2CAddress                   0x44
 // I2C IMU
 #define ACCELEROMETER_I2CAddress                0x45
 
@@ -134,6 +134,7 @@ public:
   /**Manda la información cada 10ms*/
   
   void set_reference_points(float acc, float dir, float brk);
+  void send_acceleration_breaking_direction_one_time();
 private:
   std::mutex mtx;
   std::uint8_t get_n_byte(std::uint32_t un, int pos);

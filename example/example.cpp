@@ -33,7 +33,7 @@ int main() {
     // Objects belong to I2C Class
     I2C_Device *Lidar = new I2C_Device(1, kLidarLiteI2CAddress);
     I2C_Device *IMU   = new I2C_Device(1, ACCELEROMETER_I2CAddress);
-    I2C_Device *NXP   = new I2C_Device(1, NXPS32K148_I2CAddress);
+    I2C_Device *NXP   = new I2C_Device(0, NXPS32K148_I2CAddress);
 
     std::vector<I2C_Device*> I2C_BUS1;
     I2C_BUS1.push_back(Lidar);
@@ -50,7 +50,9 @@ int main() {
     float counter = 250;
     time_t timer1,timer2;
     time(&timer1);
-
+    board->set_reference_points(counter,counter,counter);
+    board->send_acceleration_breaking_direction_one_time();
+/*
     // 27 is the ESC key
 #define ESC_key 27
     while(Lidar->error >= 0 && getkey() != ESC_key ){
@@ -65,7 +67,7 @@ int main() {
             printf("Distance: %5d cm  |  Previous Distance: %5d cm   | Velocity: % 8d \n",distance,previousDistance,velocity);
         }
         time(&timer2);
-        if(difftime(timer2,timer1) > 3){
+        if(difftime(timer2,timer1) > 3){//seconds
 			counter+=20;
 			time(&timer1);//restart timer
 			board->set_reference_points(counter,counter,counter);
@@ -73,6 +75,7 @@ int main() {
         
 
     }
+*/
     delete lidarLite;
     delete IMU;
     delete NXP;
