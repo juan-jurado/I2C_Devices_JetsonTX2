@@ -176,7 +176,6 @@ int LidarLite::getError(){
 NXPs32k148::NXPs32k148(I2C_Device* NXP){
   NXP_ = NXP;
   sending_ = std::thread(&NXPs32k148::send_acceleration_breaking_direction, this);
-  time10ms_count_ = Clock::now();
 }
 NXPs32k148::~NXPs32k148(){
   delete NXP_;
