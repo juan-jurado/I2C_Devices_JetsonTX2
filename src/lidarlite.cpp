@@ -1,6 +1,5 @@
 #include "lidarlite.h"
 #include <stdexcept>
-#include <chrono>
 #include <cstdint>
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -79,10 +78,6 @@ int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques ){
     //s32 i2c_smbus_write_block_data    (const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //el primer byte mandado va a ser 0
-    
-    for (unsigned int i = 0; i < bloques.size(); i++){
-		std::cout << "Dato mandado = " << bloques.at(i)<< std::endl;
-	}
     
     std::cout << "se enviaran " << bloques.size() << " datos \n";
     int toReturn = i2c_smbus_write_block_data(I2C_FileDescriptor, 0x23, bloques.size(), &bloques[0]);

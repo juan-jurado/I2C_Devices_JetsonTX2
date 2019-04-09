@@ -147,7 +147,7 @@ private:
   float_to_hex direction_     = {0.0};
   float_to_hex break_         = {0.0};
   //Mete los 3 floats dentro del arreglo
-  std::array<float_to_hex*,3> data_to_send = {{{&acceleration_},{&direction_},{&break_}}};
+  std::array<float_to_hex*,3> data_to_send = {{{&direction_},{&break_},{&acceleration_}}};
   bool kill_i2c_thread = 0;
   double count_cycles = 0;
 };

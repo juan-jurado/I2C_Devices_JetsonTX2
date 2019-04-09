@@ -54,6 +54,7 @@ int main() {
     //board->send_acceleration_breaking_direction_one_time();
 
     // 27 is the ESC key
+    
 #define ESC_key 27
     while(Lidar->error >= 0 && getkey() != ESC_key ){
         /*int distance = lidarLite->getDistance();
