@@ -200,9 +200,6 @@ std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
 
 void NXPs32k148::send_acceleration_breaking_direction_one_time(){
     std::vector<std::uint8_t> bytes_a_mandar;
-
-  //Reset clock after 10000us duration
-        time10ms_count_ = Clock::now();
   //mandar datos de i2c
 #define BYTES_PER_FLOAT 4
         for(unsigned int data = 0; data < data_to_send.size(); data++){
