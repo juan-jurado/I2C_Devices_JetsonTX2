@@ -150,7 +150,7 @@ private:
   std::array<float_to_hex*,3> data_to_send = {{{&direction_},{&break_},{&acceleration_}}};
   bool kill_i2c_thread = 0;
   double count_cycles = 0;
-  std::chrono::microseconds step(10003);
+  std::chrono::microseconds step = std::chrono::microseconds(10003);
 };
 
 #endif // LIDARLITE_H
