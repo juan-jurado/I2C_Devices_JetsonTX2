@@ -78,7 +78,7 @@ int I2C_Device::write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques ){
     //s32 i2c_smbus_write_block_data    (const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command, u8 length, const u8 *values)
     //el primer byte mandado va a ser 0
-    
+
     std::cout << "se enviaran " << bloques.size() << " datos \n";
     int toReturn = i2c_smbus_write_block_data(I2C_FileDescriptor, 0x23, bloques.size(), &bloques[0]);
     if(toReturn < 0){
@@ -201,7 +201,7 @@ std::uint8_t NXPs32k148::get_n_byte(std::uint32_t un, int pos){
 
 void NXPs32k148::send_acceleration_breaking_direction_one_time(){
     std::vector<std::uint8_t> bytes_a_mandar;
-    
+
   //Reset clock after 10000us duration
         time10ms_count_ = Clock::now();
   //mandar datos de i2c
@@ -211,7 +211,7 @@ void NXPs32k148::send_acceleration_breaking_direction_one_time(){
             //convertir info
             bytes_a_mandar.push_back(get_n_byte(data_to_send[data]->hex,i));
             std::cout << "bytes a mandar "<< data*4+i+1 << " = " << std::hex << (int)bytes_a_mandar.at(data*4+i) << std::endl;
-            
+
           }
         }
         int check = NXP_->write_I2CDevice_block_of_u8(bytes_a_mandar);
@@ -223,7 +223,15 @@ void NXPs32k148::send_acceleration_breaking_direction_one_time(){
         }
         bytes_a_mandar.clear();
 
-    
+
+}
+
+void wait(std::chrono::microseconds period, Clock::time_point& beginning,Clock::time_point& end){
+  beginning = Clock::now();
+  while(std::chrono::duration_cast<std::chrono::microseconds>(end - beginning).count()  < std::chrono::duration_cast<std::chrono::microseconds>(period).count()){
+    usleep(1000);
+    end = Clock::now();
+  }
 }
 
 //Esta función se abre en un hilo
@@ -231,9 +239,9 @@ void NXPs32k148::send_acceleration_breaking_direction(){
     std::vector<std::uint8_t> bytes_a_mandar;
     while(1){
 		count_cycles++;
-        while((time10ms_count_.time_since_epoch()) < std::chrono::nanoseconds(10000000)){}//alv quitar esto
+
   //Reset clock after 10000us duration
-        time10ms_count_ = Clock::now();
+        wait(step, time_begin, time_count);
         if(kill_i2c_thread){break;}
   //mandar datos de i2c
 //#define BYTES_PER_FLOAT 4

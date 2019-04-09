@@ -132,13 +132,13 @@ public:
   NXPs32k148(I2C_Device* NXP);
   ~NXPs32k148();
   /**Manda la información cada 10ms*/
-  
+
   void set_reference_points(float acc, float dir, float brk);
   void send_acceleration_breaking_direction_one_time();
 private:
   std::mutex mtx;
   std::uint8_t get_n_byte(std::uint32_t un, int pos);
-  Clock::time_point time10ms_count_;
+  Clock::time_point time_count, time_begin;
   std::thread sending_;
   void send_acceleration_breaking_direction();
   I2C_Device* NXP_;
@@ -150,6 +150,7 @@ private:
   std::array<float_to_hex*,3> data_to_send = {{{&direction_},{&break_},{&acceleration_}}};
   bool kill_i2c_thread = 0;
   double count_cycles = 0;
+  std::chrono::microseconds step(10003);
 };
 
 #endif // LIDARLITE_H
