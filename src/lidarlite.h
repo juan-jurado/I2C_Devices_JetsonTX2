@@ -25,24 +25,11 @@
 #ifndef LIDARLITE_H
 #define LIDARLITE_H
 
-#include <cstddef>
-#include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
-#include <cstdlib>
-#include <cstdio>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <iostream>
-#include <vector>
-#include <thread>
-#include <pthread.h>
-#include <chrono>
-//thread safe types
-#include <mutex>
-typedef std::chrono::high_resolution_clock Clock;
 
-#define bits_in_byte 8
+#include "I2C_Device.h"
+
+
+
 // Information taken from PulsedLight knowledge base 5-4-15
 // Internal Control Registers
 // http://kb.pulsedlight3d.com/support/solutions/articles/5000549552-detailed-register-descriptions-internal
@@ -77,25 +64,6 @@ typedef std::chrono::high_resolution_clock Clock;
 #define kLidarLiteMeasure                       0x04    // Take acquisition & correlation processing with DC correction
 
 
-class I2C_Device
-{
-public:
-    I2C_Device(unsigned char _kI2CBus, char _I2CDevice_Address);
-    ~I2C_Device() ;
-    char          I2CDevice_Address;
-    unsigned char kI2CBus;
-    int           I2C_FileDescriptor;
-    int           error;
-
-    int   write_I2CDevice (int writeRegister, int writeValue);
-    int   write_I2CDevice_block_of_u8(std::vector<std::uint8_t> bloques);
-    int   read_I2CDevice  (int readRegister);
-private:
-
-    bool  open_I2CDevice  ();
-    void  close_I2CDevice ();
-};
-
 class LidarLite
 {
 public:
@@ -120,37 +88,6 @@ public:
     I2C_Device* Lidar_;
 
 };
-union float_to_hex {
-  float flotante;
-  std::uint32_t hex;
-};
 
-class NXPs32k148
-{
-public:
-  int error;
-  NXPs32k148(I2C_Device* NXP);
-  ~NXPs32k148();
-  /**Manda la información cada 10ms*/
-
-  void set_reference_points(float acc, float dir, float brk);
-  void send_acceleration_breaking_direction_one_time();
-private:
-  std::mutex mtx;
-  std::uint8_t get_n_byte(std::uint32_t un, int pos);
-  Clock::time_point time_count, time_begin;
-  std::thread sending_;
-  void send_acceleration_breaking_direction();
-  I2C_Device* NXP_;
-  //Se usa la union para estar checando constantemente el numero ingresado al float pero en hexadecimal.
-  float_to_hex acceleration_  = {0.0};
-  float_to_hex direction_     = {0.0};
-  float_to_hex break_         = {0.0};
-  //Mete los 3 floats dentro del arreglo
-  std::array<float_to_hex*,3> data_to_send = {{{&direction_},{&break_},{&acceleration_}}};
-  bool kill_i2c_thread = 0;
-  double count_cycles = 0;
-  std::chrono::microseconds step = std::chrono::microseconds(10003);
-};
 
 #endif // LIDARLITE_H

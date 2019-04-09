@@ -3,8 +3,10 @@
 #include <string.h>
 #include <termios.h>
 #include <time.h>
-#include <lidarlite.h>
 #include <math.h>
+#include "lidarlite.h"
+#include "NXPs32k148.h"
+#include "I2C_Device.h"
 
 int getkey() {
     int character;
