@@ -7,6 +7,7 @@
 #include "lidarlite.h"
 #include "NXPs32k148.h"
 #include "I2C_Device.h"
+#include <iostream>
 
 int getkey() {
     int character;
@@ -52,6 +53,7 @@ int main() {
     float counter = 250;
     time_t timer1,timer2;
     time(&timer1);
+    
     //board->set_reference_points(counter,counter+2,counter+4);
     //board->send_acceleration_breaking_direction_one_time();
 
@@ -71,8 +73,10 @@ int main() {
         }
         * */
         time(&timer2);
-        if(difftime(timer2,timer1) > 2){//seconds
-			counter+=20;
+        if(difftime(timer2,timer1) > 1){//seconds
+			//counter+=20;
+			std::cout << "Selecciona un valor de 0 a 5000\n";
+			std::cin  >> counter;
 			time(&timer1);//restart timer
 			board->set_reference_points(counter,counter+1,counter+2);
 			//break;
